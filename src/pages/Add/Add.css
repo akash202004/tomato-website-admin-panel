@@ -30,6 +30,8 @@
 
 .add-category-price {
   display: flex;
+  align-items: center;
+  justify-content: start;
   gap: 30px;
 }
 
