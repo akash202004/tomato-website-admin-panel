@@ -12,7 +12,6 @@ const Orders = ({ url }) => {
       const response = await axios.get(url + "/api/order/listorder");
       if (response.data.success) {
         setOrders(response.data.data);
-        toast.success("Orders fetched successfully");
       } else {
         toast.error("Erorr while fetching orders");
       }
@@ -30,6 +29,19 @@ const Orders = ({ url }) => {
       minute: "2-digit",
     };
     return new Date(dateString).toLocaleDateString(undefined, options);
+  };
+
+  const statushandler = async (event, orderId) => {
+    const response = await axios.post(url + "/api/order/status", {
+      orderId,
+      status: event.target.value,
+    });
+    if (response.data.success) {
+      await fetchAllOrders();
+      toast.success("Order status updated successfully");
+    } else {
+      toast.error("Error while updating order status");
+    }
   };
 
   useEffect(() => {
@@ -76,7 +88,10 @@ const Orders = ({ url }) => {
               <p>Items: {order.items.length}</p>
               <p>${order.amount}</p>
               <p>{formatDate(order.date)}</p>
-              <select>
+              <select
+                onChange={(event) => statushandler(event, order._id)}
+                value={order.status}
+              >
                 <option value="Food Processing">Food Processing</option>
                 <option value="Out For Delivery">Out For Delivery</option>
                 <option value="Delivered">Delivered</option>
